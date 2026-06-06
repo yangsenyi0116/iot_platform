@@ -1,0 +1,67 @@
+@import 'antd/dist/reset.css';
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #213547;
+  background-color: #f5f5f5;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.ant-layout-sider {
+  background: linear-gradient(180deg, #001529 0%, #092746 100%);
+}
+
+.ant-menu-dark {
+  background: transparent;
+}
+
+.ant-menu-item {
+  margin: 4px 8px !important;
+  border-radius: 6px;
+}
+
+.ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.ant-menu-item-selected {
+  background: rgba(24, 144, 255, 0.3) !important;
+}
+
+.alarm-card {
+  border-left: 4px solid #FF4D4F;
+}
+
+.warning-card {
+  border-left: 4px solid #FAAD14;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-label {
+  color: #666;
+  font-weight: 500;
+}

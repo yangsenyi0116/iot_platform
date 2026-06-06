@@ -3,7 +3,7 @@ import type { Gateway, Device, Alarm, AlarmRule, KnowledgeItem, DataPoint } from
 import { mockGateways, mockDataPoints } from '../mocks/gateways';
 import { mockDevices } from '../mocks/devices';
 import { mockAlarms, mockAlarmRules, generateRandomAlarm } from '../mocks/alarms';
-import { mockKnowledgeBase } from '../mocks/knowledge';
+import { knowledgeItems as mockKnowledgeBase } from '../mocks/knowledge';
 import { simulateGatewayStatus, simulateDeviceData, simulateDataPoint } from '../mocks/realtimeSimulator';
 
 interface AppStore {

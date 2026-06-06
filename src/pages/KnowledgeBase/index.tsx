@@ -1,151 +1,117 @@
-import { useState } from 'react';
-import { SearchOutlined, FileTextOutlined, DownloadOutlined, BookOutlined } from '@ant-design/icons';
-import { Input, Card, Row, Col, Tag, Button, Modal, Tabs, message } from 'antd';
-import ReactMarkdown from 'react-markdown';
-import { useAppStore } from '../../stores';
-import { knowledgeCategories } from '../../mocks/knowledge';
-import type { KnowledgeItem } from '../../types';
+import React, { useState } from 'react';
+import { Tabs } from 'antd';
+import { ForkOutlined, CiOutlined, MessageOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import type { KnowledgeItemExt } from '../../types';
+import { knowledgeItems as baseKnowledgeItems } from '../../mocks/knowledge';
+import KnowledgeList from './KnowledgeList';
+import KnowledgeGraph from './KnowledgeGraph';
+import AIChat from './AIChat';
 
-const { TabPane } = Tabs;
+const KnowledgeBasePage: React.FC = () => {
+  const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItemExt[]>(
+    baseKnowledgeItems.map(item => ({
+      ...item,
+      annotations: [],
+      rating: 0,
+      ratingCount: 0
+    }))
+  );
 
-export default function KnowledgeBase() {
-  const [searchValue, setSearchValue] = useState('');
-  const [selectedItem, setSelectedItem] = useState<KnowledgeItem | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  
-  const { knowledgeBase, devices } = useAppStore();
-  
-  const filteredKnowledge = knowledgeBase.filter(item => {
-    const matchSearch = !searchValue || 
-      item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-      item.content.toLowerCase().includes(searchValue.toLowerCase());
-    const matchCategory = activeCategory === 'all' || item.category === activeCategory;
-    return matchSearch && matchCategory;
-  });
-  
-  const handleViewDetail = (item: KnowledgeItem) => {
-    setSelectedItem(item);
-    setIsModalVisible(true);
+  const [chatCollapsed, setChatCollapsed] = useState(false);
+
+  const handleUpdateKnowledge = (id: string, updates: Partial<KnowledgeItemExt>) => {
+    setKnowledgeItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
   };
-  
-  const handleDownload = (fileName: string) => {
-    message.info(`演示版：${fileName} 下载功能演示`);
-  };
-  
-  const getRelatedDevices = (deviceIds: string[]) => {
-    return devices.filter(d => deviceIds.includes(d.id));
+
+  const handleNodeClick = () => {
+    // Placeholder for node click handling
   };
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h2 style={{ margin: 0 }}>知识库</h2>
-        <Input
-          placeholder="搜索知识库..."
-          prefix={<SearchOutlined />}
-          style={{ width: 300 }}
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+    <div style={{ display: 'flex', height: '100%', gap: 16 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <Tabs
+          defaultActiveKey="graph"
+          items={[
+            {
+              key: 'graph',
+              label: (
+                <span>
+                  <ForkOutlined /> 知识图谱
+                </span>
+              ),
+              children: <KnowledgeGraph onNodeClick={handleNodeClick} />
+            },
+            {
+              key: 'list',
+              label: (
+                <span>
+                  <CiOutlined /> 知识列表
+                </span>
+              ),
+              children: (
+                <KnowledgeList
+                  knowledgeItems={knowledgeItems}
+                  onUpdateKnowledge={handleUpdateKnowledge}
+                />
+              )
+            }
+          ]}
         />
       </div>
-      
-      <Tabs activeKey={activeCategory} onChange={setActiveCategory} style={{ marginBottom: 24 }}>
-        <TabPane tab="全部" key="all" />
-        {knowledgeCategories.map(cat => (
-          <TabPane tab={cat.label} key={cat.value} />
-        ))}
-      </Tabs>
-      
-      <Row gutter={16}>
-        {filteredKnowledge.map(item => (
-          <Col span={8} key={item.id}>
-            <Card 
-              hoverable 
-              style={{ height: '100%' }}
-              onClick={() => handleViewDetail(item)}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <BookOutlined style={{ fontSize: 20, color: '#1890ff' }} />
-                <Tag color={item.category === 'fault' ? 'red' : item.category === 'maintenance' ? 'blue' : 'green'}>
-                  {{ fault: '故障码', maintenance: '维修案例', manual: '操作手册' }[item.category]}
-                </Tag>
-              </div>
-              <h3 style={{ marginBottom: 8 }}>{item.title}</h3>
-              <p style={{ color: '#666', fontSize: 12, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                {item.content.replace(/[#*]/g, '').slice(0, 150)}...
-              </p>
-              <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#999', fontSize: 12 }}>
-                  关联设备: {getRelatedDevices(item.deviceIds).length} 台
-                </span>
-                <Button icon={<FileTextOutlined />} size="small" onClick={(e) => { e.stopPropagation(); handleViewDetail(item); }}>
-                  查看详情
-                </Button>
-              </div>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-      
-      {filteredKnowledge.length === 0 && (
-        <Card>
-          <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
-            <BookOutlined style={{ fontSize: 48, marginBottom: 16 }} />
-            <div>暂无匹配的知识库内容</div>
-          </div>
-        </Card>
-      )}
-      
-      <Modal
-        title={selectedItem?.title}
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        width={800}
-        footer={null}
+
+      <div 
+        style={{ 
+          width: chatCollapsed ? 48 : 360, 
+          flexShrink: 0,
+          transition: 'width 0.3s ease',
+          position: 'relative'
+        }}
       >
-        {selectedItem && (
-          <div>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-              <Tag color={selectedItem.category === 'fault' ? 'red' : selectedItem.category === 'maintenance' ? 'blue' : 'green'}>
-                {{ fault: '故障码', maintenance: '维修案例', manual: '操作手册' }[selectedItem.category]}
-              </Tag>
+        <div 
+          style={{ 
+            position: 'absolute', 
+            left: -16, 
+            top: 20, 
+            zIndex: 10,
+            backgroundColor: '#fff',
+            border: '1px solid #f0f0f0',
+            borderRadius: '50%',
+            width: 32,
+            height: 32,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          }}
+          onClick={() => setChatCollapsed(!chatCollapsed)}
+        >
+          {chatCollapsed ? <LeftOutlined /> : <RightOutlined />}
+        </div>
+
+        <div style={{ height: '100%', backgroundColor: '#fff', borderRadius: 8, border: '1px solid #f0f0f0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          {chatCollapsed ? (
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 16 }}>
+              <MessageOutlined style={{ fontSize: 24, color: '#1890ff', marginBottom: 8 }} />
+              <span style={{ fontSize: 12, color: '#666', writingMode: 'vertical-rl' }}>AI对话</span>
             </div>
-            
-            <div style={{ marginBottom: 24 }}>
-              <ReactMarkdown>{selectedItem.content}</ReactMarkdown>
+          ) : (
+            <div style={{ padding: 12, borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <MessageOutlined style={{ fontSize: 18, color: '#1890ff' }} />
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#333' }}>AI智能助手</span>
             </div>
-            
-            {selectedItem.deviceIds.length > 0 && (
-              <div style={{ marginBottom: 24 }}>
-                <h4>关联设备</h4>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {getRelatedDevices(selectedItem.deviceIds).map(device => (
-                    <Tag key={device.id}>{device.name}</Tag>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {selectedItem.attachments.length > 0 && (
-              <div>
-                <h4>附件下载</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {selectedItem.attachments.map((file, index) => (
-                    <Button 
-                      key={index} 
-                      icon={<DownloadOutlined />} 
-                      onClick={() => handleDownload(file)}
-                    >
-                      {file}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
+          )}
+          
+          {!chatCollapsed && (
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+              <AIChat />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default KnowledgeBasePage;

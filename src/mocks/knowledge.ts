@@ -1,6 +1,6 @@
 import type { KnowledgeItem } from '../types';
 
-export const mockKnowledgeBase: KnowledgeItem[] = [
+export const knowledgeItems: KnowledgeItem[] = [
   {
     id: 'kb-001',
     title: 'CNC加工中心过热故障处理',

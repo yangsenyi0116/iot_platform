@@ -9,9 +9,9 @@ import {
   FilterOutlined,
   ReloadOutlined,
   MoreOutlined,
-  EyeOutlined
+  FileTextOutlined
 } from '@ant-design/icons';
-import { Button, Table, Card, Tag, Row, Col, Select, Input, DatePicker } from 'antd';
+import { Button, Table, Card, Tag, Row, Col, Select, Input, DatePicker, Modal, Form } from 'antd';
 import ReactECharts from 'echarts-for-react';
 import dayjs, { Dayjs } from 'dayjs';
 import { useAppStore } from '../../stores';
@@ -25,9 +25,38 @@ export default function AlarmCenter() {
   const [filterDevice, setFilterDevice] = useState<string>('');
   const [filterTime, setFilterTime] = useState<[Dayjs, Dayjs] | null>(null);
   const [searchText, setSearchText] = useState('');
+  const [showWorkOrderModal, setShowWorkOrderModal] = useState(false);
+  const [selectedAlarm, setSelectedAlarm] = useState<Alarm | null>(null);
+  const [workOrderForm] = Form.useForm();
   const navigate = useNavigate();
 
-  const { alarms, confirmAlarm, deleteAlarm, setHighlightedDeviceId } = useAppStore();
+  const { alarms, confirmAlarm, deleteAlarm } = useAppStore();
+
+  const handleGenerateWorkOrder = (alarm: Alarm) => {
+    setSelectedAlarm(alarm);
+    workOrderForm.setFieldsValue({
+      title: `${alarm.deviceName} - ${alarm.message}`,
+      description: `告警来源：${alarm.pointName}\n告警描述：${alarm.message}\n告警时间：${dayjs(alarm.timestamp).format('YYYY-MM-DD HH:mm:ss')}`
+    });
+    setShowWorkOrderModal(true);
+  };
+
+  const handleSubmitWorkOrder = () => {
+    workOrderForm.validateFields().then(values => {
+      console.log('工单创建成功:', {
+        ...values,
+        alarmId: selectedAlarm?.id,
+        deviceId: selectedAlarm?.deviceId,
+        deviceName: selectedAlarm?.deviceName,
+        type: 'alarm_repair',
+        priority: selectedAlarm?.type === 'alarm' ? 'P1' : 'P2'
+      });
+      setShowWorkOrderModal(false);
+      setSelectedAlarm(null);
+      workOrderForm.resetFields();
+      navigate('/work-orders');
+    });
+  };
 
   const deviceOptions = useMemo(() => {
     return [...new Set(alarms.map(a => a.deviceName))];
@@ -64,11 +93,6 @@ export default function AlarmCenter() {
 
   const handleDelete = (id: string) => {
     deleteAlarm(id);
-  };
-
-  const handleViewIn3D = (deviceId: string) => {
-    setHighlightedDeviceId(deviceId);
-    navigate('/digitaltwin');
   };
 
   const columns = [
@@ -136,22 +160,22 @@ export default function AlarmCenter() {
     {
       title: '操作',
       key: 'action',
-      width: 180,
+      width: 240,
       render: (_: unknown, record: Alarm) => (
         <div style={{ display: 'flex', gap: 6 }}>
           <Button
-            icon={<EyeOutlined />}
+            icon={<FileTextOutlined />}
             size="small"
-            onClick={() => handleViewIn3D(record.deviceId)}
+            type="primary"
+            onClick={() => handleGenerateWorkOrder(record)}
             style={{ padding: '4px 8px' }}
           >
-            3D查看
+            生成工单
           </Button>
           {!record.confirmed && (
             <Button
               icon={<CheckCircleOutlined />}
               size="small"
-              type="primary"
               onClick={() => handleConfirm(record.id)}
               style={{ padding: '4px 8px' }}
             >
@@ -525,6 +549,43 @@ export default function AlarmCenter() {
           background-color: rgba(24, 144, 255, 0.05) !important;
         }
       `}</style>
+
+      <Modal
+        title="从告警生成工单"
+        open={showWorkOrderModal}
+        onCancel={() => {
+          setShowWorkOrderModal(false);
+          setSelectedAlarm(null);
+          workOrderForm.resetFields();
+        }}
+        footer={null}
+        width={500}
+      >
+        <Form form={workOrderForm} layout="vertical">
+          <Form.Item
+            name="title"
+            label="工单标题"
+            rules={[{ required: true, message: '请输入工单标题' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="工单描述"
+            rules={[{ required: true, message: '请输入工单描述' }]}
+          >
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <Button onClick={() => setShowWorkOrderModal(false)}>取消</Button>
+              <Button type="primary" onClick={handleSubmitWorkOrder}>
+                生成工单
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }

@@ -102,3 +102,68 @@ export interface DeviceEvent {
 }
 
 export type LifecycleStage = 'purchased' | 'warehoused' | 'installed' | 'running' | 'maintenance' | 'retired';
+
+export interface WorkOrder {
+  id: string;
+  code: string;
+  title: string;
+  type: 'alarm_repair' | 'predictive_maintenance' | 'routine_inspection' | 'installation' | 'migration' | 'scrap';
+  priority: 'P0' | 'P1' | 'P2' | 'P3';
+  status: 'pending' | 'in_progress' | 'pending_review' | 'completed' | 'cancelled';
+  deviceId: string;
+  deviceName: string;
+  alarmId?: string;
+  assignee: string;
+  plannedFinishTime: string;
+  actualFinishTime?: string;
+  description: string;
+  attachments: string[];
+  timeline: WorkOrderLog[];
+  createdAt: string;
+}
+
+export interface WorkOrderLog {
+  id: string;
+  action: string;
+  operator: string;
+  timestamp: string;
+  description?: string;
+}
+
+export interface GraphNode {
+  id: string;
+  name: string;
+  type: 'domain' | 'deviceType' | 'device' | 'faultCode' | 'case' | 'document' | 'component' | 'fault_mode' | 'maintenance_strategy' | 'spare_part' | 'symptom';
+  properties?: Record<string, any>;
+}
+
+export interface GraphEdge {
+  source: string;
+  target: string;
+  relation: 'belongs_to' | 'instance_of' | 'has_fault' | 'solution' | 'references' | 'similar_to' | 'has_component' | 'has_symptom' | 'needs_spare';
+}
+
+export interface AIResponse {
+  question: string;
+  answer: string;
+  relatedCases: string[];
+  relatedDocuments: string[];
+  suggestedWorkOrder?: string;
+}
+
+export interface Annotation {
+  id: string;
+  knowledgeId: string;
+  type: 'comment' | 'rating' | 'correction';
+  content: string;
+  rating?: number;
+  author: string;
+  createdAt: string;
+  replies?: Annotation[];
+}
+
+export interface KnowledgeItemExt extends KnowledgeItem {
+  annotations: Annotation[];
+  rating: number;
+  ratingCount: number;
+}

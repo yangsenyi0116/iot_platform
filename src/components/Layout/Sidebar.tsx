@@ -11,6 +11,7 @@ import {
   BoxPlotOutlined,
   HistoryOutlined,
   DashboardOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 
@@ -42,6 +43,12 @@ const menuItems = [
           { key: '/alarm/history', icon: <HistoryOutlined />, label: '历史报警' },
         ]
       },
+    ]
+  },
+  {
+    group: '工单管理',
+    items: [
+      { key: '/work-orders', icon: <FileTextOutlined />, label: '工单管理' },
     ]
   },
   {

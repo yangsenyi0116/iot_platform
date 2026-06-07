@@ -106,6 +106,8 @@ export interface DeviceEvent {
 
 export type LifecycleStage = 'purchased' | 'warehoused' | 'installed' | 'running' | 'maintenance' | 'retired';
 
+export type StockStatus = 'out' | 'critical' | 'warning' | 'normal' | 'overstock';
+
 export interface SparePart {
   id: string;
   name: string;
@@ -120,6 +122,72 @@ export interface SparePart {
   issuedQuantity?: number;
   issuedBy?: string;
   issuedAt?: string;
+}
+
+export interface SparePartItem {
+  id: string;
+  name: string;
+  code: string;
+  stock: number;
+  safetyStock: number;
+  status: StockStatus;
+  warehouse: string;
+  unit: string;
+  category: string;
+  lastIssuedDate: string;
+  unitPrice: number;
+  totalValue: number;
+  issueRecords: IssueRecord[];
+}
+
+export interface IssueRecord {
+  id: string;
+  date: string;
+  quantity: number;
+  operator: string;
+  workOrderCode: string;
+  trend: 'up' | 'down' | 'stable';
+}
+
+export interface AIInventoryAnalysis {
+  healthScore: number;
+  healthLevel: 'excellent' | 'good' | 'fair' | 'poor';
+  overstockRatio: number;
+  outOfStockRatio: number;
+  turnoverRate: number;
+  suggestions: Array<{
+    id: string;
+    type: 'overstock' | 'shortage' | 'procurement' | 'trend' | 'capital';
+    title: string;
+    content: string;
+    affectedParts: string[];
+    estimatedImpact?: string;
+    actions: Array<{
+      label: string;
+      actionType: 'viewList' | 'createWorkOrder' | 'purchase' | 'viewDevices' | 'adopt' | 'ignore';
+      params?: any;
+    }>;
+  }>;
+  procurementOptimizations: Array<{
+    partId: string;
+    partName: string;
+    originalSuggested: number;
+    optimizedSuggested: number;
+    reason: string;
+  }>;
+}
+
+export interface ProcurementSuggestion {
+  id: string;
+  partId: string;
+  partName: string;
+  partCode: string;
+  currentStock: number;
+  safetyStock: number;
+  status: StockStatus;
+  suggestedQuantity: number;
+  hasAIOptimization: boolean;
+  aiReason?: string;
 }
 
 export interface SafetyNote {
@@ -315,4 +383,57 @@ export interface DeviceDetail {
 export interface HistoryDataPoint {
   timestamp: number;
   value: number;
+}
+
+export interface EnergyOverview {
+  totalEnergy: number;
+  totalEnergyChange: number;
+  greenEnergy: number;
+  greenEnergyRatio: number;
+  carbonEmission: number;
+  carbonChange: number;
+}
+
+export interface EnergyCurveData {
+  timePoints: string[];
+  totalEnergy: number[];
+  greenEnergy: number[];
+}
+
+export interface DeviceEnergyRank {
+  deviceId: string;
+  deviceName: string;
+  deviceType: string;
+  energy: number;
+  ratio: number;
+}
+
+export interface AIOptimizationSuggestion {
+  id: string;
+  content: string;
+  estimatedSaving: number;
+  savingRatio: number;
+  relatedDeviceId?: string;
+  relatedDeviceName?: string;
+  status: 'pending' | 'adopted' | 'implemented';
+}
+
+export interface EnergyEfficiencyStats {
+  level1: { count: number; ratio: number };
+  level2: { count: number; ratio: number };
+  level3: { count: number; ratio: number };
+  levelBelow: { count: number; ratio: number };
+}
+
+export type EfficiencyLevel = 'level1' | 'level2' | 'level3' | 'levelBelow';
+
+export interface DeviceEfficiency {
+  deviceId: string;
+  deviceName: string;
+  deviceType: string;
+  energy: number;
+  output: number;
+  outputUnit: string;
+  efficiencyIndex: number;
+  level: EfficiencyLevel;
 }

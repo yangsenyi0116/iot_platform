@@ -12,6 +12,8 @@ import {
   HistoryOutlined,
   DashboardOutlined,
   FileTextOutlined,
+  ThunderboltOutlined,
+  ToolOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 
@@ -25,7 +27,7 @@ const menuItems = [
     ]
   },
   {
-    group: '核心能力',
+    group: '设备管理',
     items: [
       { key: '/gateway', icon: <GatewayOutlined />, label: 'IoT网关管理' },
       { key: '/device', icon: <DesktopOutlined />, label: '设备管理' },
@@ -56,6 +58,8 @@ const menuItems = [
     items: [
       { key: '/predictive', icon: <BarChartOutlined />, label: '预测性维护' },
       { key: '/knowledge', icon: <BookOutlined />, label: '知识库' },
+      { key: '/energy', icon: <ThunderboltOutlined />, label: '能耗管理' },
+      { key: '/spare-parts', icon: <ToolOutlined />, label: '备件管理' },
     ]
   },
 ];

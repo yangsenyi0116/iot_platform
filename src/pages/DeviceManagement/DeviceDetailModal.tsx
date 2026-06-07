@@ -204,7 +204,19 @@ export default function DeviceDetailModal({ open, onClose, deviceId }: DeviceDet
   };
 
   if (!deviceDetail) {
-    return null;
+    return (
+      <Modal
+        title="加载中..."
+        open={open}
+        onCancel={onClose}
+        footer={null}
+      >
+        <div style={{ textAlign: 'center', padding: 40 }}>
+          <div style={{ fontSize: 48, marginBottom: 12 }}>⌛</div>
+          <div style={{ color: '#999' }}>正在加载设备信息...</div>
+        </div>
+      </Modal>
+    );
   }
 
   const { basicInfo, runningStatus, relatedKnowledge, documents, recentEvents, maintenanceRecords } = deviceDetail;
@@ -554,6 +566,7 @@ export default function DeviceDetailModal({ open, onClose, deviceId }: DeviceDet
       >
         <div ref={chartRef} style={{ height: 350 }} />
       </Modal>
-    </>
+
+      </>
   );
 }

@@ -8,6 +8,8 @@ import WorkOrder from './pages/WorkOrder';
 import PredictiveMaintenance from './pages/PredictiveMaintenance';
 import KnowledgeBase from './pages/KnowledgeBase';
 import DigitalTwin from './pages/DigitalTwin';
+import EnergyManagement from './pages/EnergyManagement';
+import SpareParts from './pages/SpareParts';
 
 export default function App() {
   return (
@@ -23,6 +25,8 @@ export default function App() {
           <Route path="/work-orders" element={<WorkOrder />} />
           <Route path="/predictive" element={<PredictiveMaintenance />} />
           <Route path="/knowledge" element={<KnowledgeBase />} />
+          <Route path="/energy" element={<EnergyManagement />} />
+          <Route path="/spare-parts" element={<SpareParts />} />
         </Routes>
       </CustomLayout>
     </Router>

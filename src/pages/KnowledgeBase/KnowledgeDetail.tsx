@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, Tag, Button, Rate, Input, List, Divider } from 'antd';
 import { FileTextOutlined, StarOutlined, MessageOutlined, LeftCircleOutlined, GithubOutlined } from '@ant-design/icons';
 import type { KnowledgeItemExt, Annotation } from '../../types';

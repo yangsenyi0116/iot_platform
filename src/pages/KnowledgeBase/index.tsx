@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Tabs } from 'antd';
 import { ForkOutlined, CiOutlined, MessageOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { KnowledgeItemExt } from '../../types';

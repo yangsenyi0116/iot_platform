@@ -64,18 +64,26 @@ export const mockGateways: Gateway[] = [
 ];
 
 export const mockDataPoints: DataPoint[] = [
-  { id: 'p-001', name: '温度传感器', unit: '°C', currentValue: 72, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
-  { id: 'p-002', name: '振动传感器', unit: 'mm/s', currentValue: 0.22, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
-  { id: 'p-003', name: '压力传感器', unit: 'MPa', currentValue: 2.4, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 5, warningThreshold: 3.5, alarmThreshold: 4.5 },
-  { id: 'p-004', name: '电流传感器', unit: 'A', currentValue: 15.6, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 30, warningThreshold: 25, alarmThreshold: 28 },
-  { id: 'p-005', name: '温度传感器', unit: '°C', currentValue: 68, timestamp: Date.now(), gatewayId: 'gw-002', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
-  { id: 'p-006', name: '振动传感器', unit: 'mm/s', currentValue: 0.18, timestamp: Date.now(), gatewayId: 'gw-002', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
-  { id: 'p-007', name: '温度传感器', unit: '°C', currentValue: 0, timestamp: Date.now(), gatewayId: 'gw-003', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
-  { id: 'p-008', name: '振动传感器', unit: 'mm/s', currentValue: 0, timestamp: Date.now(), gatewayId: 'gw-003', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
-  { id: 'p-009', name: '温度传感器', unit: '°C', currentValue: 71, timestamp: Date.now(), gatewayId: 'gw-004', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
-  { id: 'p-010', name: '振动传感器', unit: 'mm/s', currentValue: 0.25, timestamp: Date.now(), gatewayId: 'gw-004', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
-  { id: 'p-011', name: '温度传感器', unit: '°C', currentValue: 88, timestamp: Date.now(), gatewayId: 'gw-005', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
-  { id: 'p-012', name: '振动传感器', unit: 'mm/s', currentValue: 0.45, timestamp: Date.now(), gatewayId: 'gw-005', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
+  { id: 'p-001', name: 'TEMP-MAIN-01', deviceName: 'CNC-A003', dataType: 'Float', frequency: '1s', unit: '°C', currentValue: 72.35, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
+  { id: 'p-002', name: 'VIB-SPINDLE-01', deviceName: 'CNC-A003', dataType: 'Float', frequency: '0.5s', unit: 'mm/s', currentValue: 0.023, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
+  { id: 'p-003', name: 'PRESS-HYD-01', deviceName: 'PUMP-E005', dataType: 'Float', frequency: '1s', unit: 'MPa', currentValue: 3.42, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 5, warningThreshold: 3.5, alarmThreshold: 4.5 },
+  { id: 'p-004', name: 'FLOW-OUT-01', deviceName: 'PUMP-E005', dataType: 'Float', frequency: '2s', unit: 'L/min', currentValue: 125.6, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 200, warningThreshold: 150, alarmThreshold: 180 },
+  { id: 'p-005', name: 'CURR-MOTOR-01', deviceName: 'MOTOR-G003', dataType: 'Float', frequency: '1s', unit: 'A', currentValue: 15.8, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 30, warningThreshold: 25, alarmThreshold: 28 },
+  { id: 'p-006', name: 'POS-JOINT-03', deviceName: 'ROBOT-C007', dataType: 'Double', frequency: '0.1s', unit: '°', currentValue: 45.127, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 360, warningThreshold: 300, alarmThreshold: 350 },
+  { id: 'p-007', name: 'SPEED-CONV-01', deviceName: 'CONV-D002', dataType: 'Float', frequency: '1s', unit: 'm/s', currentValue: 1.2, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 5, warningThreshold: 3, alarmThreshold: 4 },
+  { id: 'p-008', name: 'DI-EMG-STOP', deviceName: 'PLC-B012', dataType: 'Bool', frequency: '0.1s', unit: '', currentValue: 0, timestamp: Date.now(), gatewayId: 'gw-001', minValue: 0, maxValue: 1, warningThreshold: 0.5, alarmThreshold: 0.5 },
+  { id: 'p-009', name: 'TEMP-MAIN-02', deviceName: 'CNC-A004', dataType: 'Float', frequency: '1s', unit: '°C', currentValue: 68.72, timestamp: Date.now(), gatewayId: 'gw-002', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
+  { id: 'p-010', name: 'VIB-SPINDLE-02', deviceName: 'CNC-A004', dataType: 'Float', frequency: '0.5s', unit: 'mm/s', currentValue: 0.018, timestamp: Date.now(), gatewayId: 'gw-002', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
+  { id: 'p-011', name: 'PRESS-HYD-02', deviceName: 'PUMP-E006', dataType: 'Float', frequency: '1s', unit: 'MPa', currentValue: 2.89, timestamp: Date.now(), gatewayId: 'gw-002', minValue: 0, maxValue: 5, warningThreshold: 3.5, alarmThreshold: 4.5 },
+  { id: 'p-012', name: 'FLOW-OUT-02', deviceName: 'PUMP-E006', dataType: 'Float', frequency: '2s', unit: 'L/min', currentValue: 98.4, timestamp: Date.now(), gatewayId: 'gw-002', minValue: 0, maxValue: 200, warningThreshold: 150, alarmThreshold: 180 },
+  { id: 'p-013', name: 'CURR-MOTOR-02', deviceName: 'MOTOR-G004', dataType: 'Float', frequency: '1s', unit: 'A', currentValue: 12.3, timestamp: Date.now(), gatewayId: 'gw-002', minValue: 0, maxValue: 30, warningThreshold: 25, alarmThreshold: 28 },
+  { id: 'p-014', name: 'TEMP-MAIN-03', deviceName: 'CNC-A005', dataType: 'Float', frequency: '1s', unit: '°C', currentValue: 0, timestamp: Date.now(), gatewayId: 'gw-003', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
+  { id: 'p-015', name: 'VIB-SPINDLE-03', deviceName: 'CNC-A005', dataType: 'Float', frequency: '0.5s', unit: 'mm/s', currentValue: 0, timestamp: Date.now(), gatewayId: 'gw-003', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
+  { id: 'p-016', name: 'TEMP-MAIN-04', deviceName: 'CNC-A006', dataType: 'Float', frequency: '1s', unit: '°C', currentValue: 71.28, timestamp: Date.now(), gatewayId: 'gw-004', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
+  { id: 'p-017', name: 'VIB-SPINDLE-04', deviceName: 'CNC-A006', dataType: 'Float', frequency: '0.5s', unit: 'mm/s', currentValue: 0.025, timestamp: Date.now(), gatewayId: 'gw-004', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
+  { id: 'p-018', name: 'TEMP-MAIN-05', deviceName: 'CNC-A007', dataType: 'Float', frequency: '1s', unit: '°C', currentValue: 88.95, timestamp: Date.now(), gatewayId: 'gw-005', minValue: 0, maxValue: 100, warningThreshold: 75, alarmThreshold: 85 },
+  { id: 'p-019', name: 'VIB-SPINDLE-05', deviceName: 'CNC-A007', dataType: 'Float', frequency: '0.5s', unit: 'mm/s', currentValue: 0.45, timestamp: Date.now(), gatewayId: 'gw-005', minValue: 0, maxValue: 1, warningThreshold: 0.3, alarmThreshold: 0.5 },
+  { id: 'p-020', name: 'CURR-MOTOR-03', deviceName: 'MOTOR-G005', dataType: 'Float', frequency: '1s', unit: 'A', currentValue: 28.5, timestamp: Date.now(), gatewayId: 'gw-005', minValue: 0, maxValue: 30, warningThreshold: 25, alarmThreshold: 28 },
 ];
 
 export const gatewayProtocols = ['Modbus', 'OPC UA', 'MQTT', 'HTTP', 'TCP/IP'];

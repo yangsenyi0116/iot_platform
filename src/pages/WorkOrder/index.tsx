@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Tabs } from 'antd';
 import { LayoutOutlined, CiOutlined } from '@ant-design/icons';
 import type { WorkOrder } from '../../types';

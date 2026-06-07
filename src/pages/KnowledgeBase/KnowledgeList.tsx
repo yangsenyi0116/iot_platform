@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, Tag, Input, Select, Rate, Avatar } from 'antd';
 import { SearchOutlined, StarOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { KnowledgeItemExt } from '../../types';

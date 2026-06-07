@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, Select, Input, Tag, Descriptions, Statistic } from 'antd';
 import { SearchOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import * as echarts from 'echarts';

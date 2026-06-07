@@ -34,6 +34,9 @@ export interface Device {
 export interface DataPoint {
   id: string;
   name: string;
+  deviceName: string;
+  dataType: string;
+  frequency: string;
   unit: string;
   currentValue: number;
   timestamp: number;
@@ -103,23 +106,81 @@ export interface DeviceEvent {
 
 export type LifecycleStage = 'purchased' | 'warehoused' | 'installed' | 'running' | 'maintenance' | 'retired';
 
+export interface SparePart {
+  id: string;
+  name: string;
+  code: string;
+  quantity: number;
+  unit: string;
+  stock: number;
+  hasStock: boolean;
+  location?: string;
+  actualQuantity?: number;
+  issued?: boolean;
+  issuedQuantity?: number;
+  issuedBy?: string;
+  issuedAt?: string;
+}
+
+export interface SafetyNote {
+  id: string;
+  content: string;
+  priority: 'high' | 'medium' | 'low';
+  category: 'electrical' | 'mechanical' | 'chemical' | 'work_permit' | 'environment';
+}
+
+export interface MaintenanceStep {
+  id: string;
+  order: number;
+  title: string;
+  description: string;
+  estimatedTime: string;
+}
+
+export interface AIRecommendation {
+  recommendedSolution: string;
+  confidence: number;
+  steps: MaintenanceStep[];
+  relatedCases: HistoricalCase[];
+}
+
+export interface HistoricalCase {
+  id: string;
+  code: string;
+  title: string;
+  deviceName: string;
+  problemDescription: string;
+  solution: string;
+  result: 'success' | 'partial' | 'failed';
+  createdAt: string;
+  similarity: number;
+}
+
+export type RepairResult = 'fully_repaired' | 'partially_repaired' | 'not_repaired';
+
 export interface WorkOrder {
   id: string;
   code: string;
   title: string;
   type: 'alarm_repair' | 'predictive_maintenance' | 'routine_inspection' | 'installation' | 'migration' | 'scrap';
   priority: 'P0' | 'P1' | 'P2' | 'P3';
-  status: 'pending' | 'in_progress' | 'pending_review' | 'completed' | 'cancelled';
+  status: 'pending' | 'pending_parts' | 'in_progress' | 'pending_review' | 'completed' | 'cancelled';
   deviceId: string;
   deviceName: string;
   alarmId?: string;
   assignee: string;
+  reviewer?: string;
   plannedFinishTime: string;
   actualFinishTime?: string;
   description: string;
   attachments: string[];
   timeline: WorkOrderLog[];
   createdAt: string;
+  spareParts?: SparePart[];
+  safetyNotes?: SafetyNote[];
+  aiRecommendation?: AIRecommendation;
+  repairResult?: RepairResult;
+  repairRemark?: string;
 }
 
 export interface WorkOrderLog {

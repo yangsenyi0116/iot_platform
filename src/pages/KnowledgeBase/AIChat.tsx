@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Input, Button, Avatar, Tag, Spin } from 'antd';
 import { SendOutlined, UserOutlined, RobotOutlined, FileTextOutlined, LeftCircleOutlined } from '@ant-design/icons';
 import { getAIResponse } from '../../mocks/aiResponses';

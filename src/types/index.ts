@@ -228,3 +228,91 @@ export interface KnowledgeItemExt extends KnowledgeItem {
   rating: number;
   ratingCount: number;
 }
+
+export interface BoundPoint {
+  pointId: string;
+  pointName: string;
+  gatewayId: string;
+  gatewayName: string;
+  currentValue: number;
+  unit: string;
+  updateTime: string;
+  status: 'normal' | 'warning' | 'alarm';
+  thresholdWarning: number;
+  thresholdAlarm: number;
+}
+
+export interface RunningStatus {
+  isRunning: boolean;
+  currentPower: number;
+  loadRate: number;
+  currentSpeed: number;
+  cumulativeHours: number;
+  currentSessionHours: number;
+  monthHours: number;
+  yearHours: number;
+  startStopRecords: Array<{
+    time: string;
+    action: 'start' | 'stop';
+  }>;
+}
+
+export interface RelatedKnowledge {
+  id: string;
+  title: string;
+  type: 'faultCode' | 'case' | 'manual';
+}
+
+export interface DeviceDocument {
+  id: string;
+  name: string;
+  uploadTime: string;
+  url: string;
+}
+
+export interface RecentEvent {
+  time: string;
+  type: 'alarm' | 'warning' | 'start' | 'stop' | 'workOrder' | 'config' | 'maintenance' | 'info';
+  description: string;
+  source: string;
+}
+
+export interface MaintenanceRecord {
+  time: string;
+  workOrderId: string;
+  workOrderCode: string;
+  type: string;
+  faultDescription: string;
+  result: string;
+  technician: string;
+}
+
+export interface DeviceDetail {
+  basicInfo: {
+    id: string;
+    name: string;
+    code: string;
+    type: string;
+    model: string;
+    location: string;
+    commissionDate: string;
+    department: string;
+    responsiblePerson: string;
+    manufacturer: string;
+    status: 'running' | 'stopped' | 'maintenance' | 'idle';
+    gatewayId: string;
+    gatewayName: string;
+    healthScore: number;
+  };
+  boundPoints: BoundPoint[];
+  runningStatus: RunningStatus;
+  relatedKnowledge: RelatedKnowledge[];
+  documents: DeviceDocument[];
+  recentEvents: RecentEvent[];
+  maintenanceRecords: MaintenanceRecord[];
+}
+
+export interface HistoryDataPoint {
+  timestamp: number;
+  value: number;
+}

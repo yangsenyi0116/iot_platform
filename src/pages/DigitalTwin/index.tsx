@@ -6,6 +6,7 @@ import { SunOutlined, CloudOutlined, UndoOutlined, BuildOutlined, HomeOutlined, 
 import { useAppStore } from '../../stores';
 import type { Device, DeviceEvent } from '../../types';
 import { mockDeviceEvents } from '../../mocks/devices';
+import DeviceDetailModal from '../DeviceManagement/DeviceDetailModal';
 import * as THREE from 'three';
 
 const formatEventTime = (timestamp: number): string => {
@@ -402,6 +403,7 @@ export default function DigitalTwin() {
   const [deviceEvents, setDeviceEvents] = useState<DeviceEvent[]>(mockDeviceEvents);
   const [newEventIds, setNewEventIds] = useState<Set<string>>(new Set());
   const [alertDeviceIds, setAlertDeviceIds] = useState<Set<string>>(new Set());
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -619,8 +621,9 @@ export default function DigitalTwin() {
   };
 
   return (
-    <div style={{ height: 'calc(100vh - 136px)', display: 'flex', gap: 16, position: 'relative' }}>
-      <div style={{ flex: 1, position: 'relative', background: '#f0f2f5', borderRadius: 8 }}>
+    <>
+      <div style={{ height: 'calc(100vh - 136px)', display: 'flex', gap: 16, position: 'relative' }}>
+        <div style={{ flex: 1, position: 'relative', background: '#f0f2f5', borderRadius: 8 }}>
         <Canvas shadows={showShadows} camera={{ position: cameraPosition, fov: 50 }} style={{ background: 'transparent' }}>
           <Lights />
           <OrbitControls 
@@ -784,7 +787,12 @@ export default function DigitalTwin() {
         </Card>
         
         {selectedDevice && (
-          <Card title={`设备详情 - ${selectedDevice.name}`}>
+          <Card 
+            title={`设备详情 - ${selectedDevice.name}`}
+            hoverable
+            style={{ cursor: 'pointer' }}
+            onClick={() => setIsDetailModalVisible(true)}
+          >
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: '#666' }}>设备编码</span>
@@ -817,6 +825,13 @@ export default function DigitalTwin() {
         )}
       </div>
     </div>
+
+    <DeviceDetailModal
+        open={isDetailModalVisible}
+        onClose={() => setIsDetailModalVisible(false)}
+        deviceId={selectedDevice?.id || ''}
+      />
+    </>
   );
 }
 

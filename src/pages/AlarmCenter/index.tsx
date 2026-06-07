@@ -140,9 +140,9 @@ export default function AlarmCenter() {
     {
       title: '状态',
       key: 'confirmed',
-      width: 80,
+      width: 100,
       render: (_: unknown, record: Alarm) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
           {record.confirmed ? (
             <>
               <CheckCircleOutlined style={{ color: '#52C41A', fontSize: 14 }} />

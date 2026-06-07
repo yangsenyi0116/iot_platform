@@ -1,4 +1,4 @@
-import type { Device, DeviceLifecycleEvent, DeviceEvent } from '../types';
+import type { Device, DeviceLifecycleEvent, DeviceEvent, DeviceDetail, HistoryDataPoint } from '../types';
 
 export const mockDevices: Device[] = [
   {
@@ -266,3 +266,593 @@ export const mockDeviceEvents: DeviceEvent[] = [
     resolved: false,
   },
 ];
+
+export const mockDeviceDetails: Record<string, DeviceDetail> = {
+  'dev-001': {
+    basicInfo: {
+      id: 'dev-001',
+      name: 'CNC加工中心-A1',
+      code: 'CNC-001',
+      type: '数控加工中心',
+      model: 'DMG-MORI-5X',
+      location: 'A区-1号车间',
+      commissionDate: '2023-03-20',
+      department: '设备动力部',
+      responsiblePerson: '张建国',
+      manufacturer: '德马吉森精机',
+      status: 'running',
+      gatewayId: 'gw-001',
+      gatewayName: '网关-GW-01',
+      healthScore: 92,
+    },
+    boundPoints: [
+      {
+        pointId: 'p-001',
+        pointName: '主轴温度',
+        gatewayId: 'gw-001',
+        gatewayName: '网关-GW-01',
+        currentValue: 72.5,
+        unit: '°C',
+        updateTime: new Date().toISOString(),
+        status: 'normal',
+        thresholdWarning: 75,
+        thresholdAlarm: 85,
+      },
+      {
+        pointId: 'p-002',
+        pointName: '主轴振动',
+        gatewayId: 'gw-001',
+        gatewayName: '网关-GW-01',
+        currentValue: 0.22,
+        unit: 'mm/s',
+        updateTime: new Date().toISOString(),
+        status: 'normal',
+        thresholdWarning: 0.3,
+        thresholdAlarm: 0.5,
+      },
+      {
+        pointId: 'p-013',
+        pointName: '主轴转速',
+        gatewayId: 'gw-001',
+        gatewayName: '网关-GW-01',
+        currentValue: 3500,
+        unit: 'rpm',
+        updateTime: new Date().toISOString(),
+        status: 'normal',
+        thresholdWarning: 4000,
+        thresholdAlarm: 4500,
+      },
+      {
+        pointId: 'p-014',
+        pointName: '电机电流',
+        gatewayId: 'gw-001',
+        gatewayName: '网关-GW-01',
+        currentValue: 85,
+        unit: 'A',
+        updateTime: new Date().toISOString(),
+        status: 'normal',
+        thresholdWarning: 100,
+        thresholdAlarm: 120,
+      },
+    ],
+    runningStatus: {
+      isRunning: true,
+      currentPower: 112,
+      loadRate: 78,
+      currentSpeed: 3500,
+      cumulativeHours: 12580,
+      currentSessionHours: 48,
+      monthHours: 342,
+      yearHours: 2156,
+      startStopRecords: [
+        { time: '2024-01-15 08:00', action: 'start' },
+        { time: '2024-01-14 23:30', action: 'stop' },
+        { time: '2024-01-14 08:00', action: 'start' },
+        { time: '2024-01-13 22:00', action: 'stop' },
+        { time: '2024-01-13 08:00', action: 'start' },
+      ],
+    },
+    relatedKnowledge: [
+      { id: 'k-001', title: 'CNC主轴过热故障处理（故障码 E-101）', type: 'faultCode' },
+      { id: 'k-002', title: 'CNC加工中心轴承更换维修案例（案例 #023）', type: 'case' },
+      { id: 'k-003', title: 'DMG-MORI-5X 维护保养手册 v2.0', type: 'manual' },
+    ],
+    documents: [
+      { id: 'doc-001', name: 'CNC加工中心安装调试报告.pdf', uploadTime: '2023-03-10', url: '#' },
+      { id: 'doc-002', name: 'CNC加工中心季度巡检记录.xlsx', uploadTime: '2024-Q1', url: '#' },
+      { id: 'doc-003', name: '设备铭牌照片.jpg', uploadTime: '2023-03-20', url: '#' },
+    ],
+    recentEvents: [
+      { time: '2024-01-15 10:23', type: 'info', description: '设备运行正常，已连续运行48小时', source: '系统监控' },
+      { time: '2024-01-15 08:00', type: 'start', description: '设备远程启动', source: '操作日志' },
+      { time: '2024-01-14 23:30', type: 'stop', description: '设备正常停机', source: '操作日志' },
+      { time: '2024-01-12 14:15', type: 'workOrder', description: '主轴润滑保养完成', source: '工单 WO-003' },
+    ],
+    maintenanceRecords: [
+      { time: '2024-01-10', workOrderId: 'wo-023', workOrderCode: 'WO-023', type: '故障维修', faultDescription: '主轴温度过高', result: '清理散热片，恢复正常', technician: '李工' },
+      { time: '2023-12-05', workOrderId: 'wo-089', workOrderCode: 'WO-089', type: '预防性维护', faultDescription: '轴承保养', result: '更换润滑油、轴承', technician: '王工' },
+      { time: '2023-10-20', workOrderId: 'wo-045', workOrderCode: 'WO-045', type: '故障维修', faultDescription: '振动超标', result: '动平衡校正', technician: '李工' },
+    ],
+  },
+  'dev-002': {
+    basicInfo: {
+      id: 'dev-002',
+      name: 'CNC加工中心-A2',
+      code: 'CNC-002',
+      type: '数控加工中心',
+      model: 'DMG-MORI-5X',
+      location: 'A区-1号车间',
+      commissionDate: '2023-03-20',
+      department: '设备动力部',
+      responsiblePerson: '张建国',
+      manufacturer: '德马吉森精机',
+      status: 'running',
+      gatewayId: 'gw-001',
+      gatewayName: '网关-GW-01',
+      healthScore: 78,
+    },
+    boundPoints: [
+      {
+        pointId: 'p-003',
+        pointName: '主轴温度',
+        gatewayId: 'gw-001',
+        gatewayName: '网关-GW-01',
+        currentValue: 76.8,
+        unit: '°C',
+        updateTime: new Date().toISOString(),
+        status: 'warning',
+        thresholdWarning: 75,
+        thresholdAlarm: 85,
+      },
+      {
+        pointId: 'p-004',
+        pointName: '主轴振动',
+        gatewayId: 'gw-001',
+        gatewayName: '网关-GW-01',
+        currentValue: 0.32,
+        unit: 'mm/s',
+        updateTime: new Date().toISOString(),
+        status: 'warning',
+        thresholdWarning: 0.3,
+        thresholdAlarm: 0.5,
+      },
+    ],
+    runningStatus: {
+      isRunning: true,
+      currentPower: 95,
+      loadRate: 65,
+      currentSpeed: 3200,
+      cumulativeHours: 8920,
+      currentSessionHours: 12,
+      monthHours: 286,
+      yearHours: 1820,
+      startStopRecords: [
+        { time: '2024-01-15 08:00', action: 'start' },
+        { time: '2024-01-14 22:00', action: 'stop' },
+        { time: '2024-01-14 08:00', action: 'start' },
+      ],
+    },
+    relatedKnowledge: [
+      { id: 'k-001', title: 'CNC主轴过热故障处理（故障码 E-101）', type: 'faultCode' },
+      { id: 'k-004', title: 'CNC振动超标排查指南', type: 'manual' },
+    ],
+    documents: [
+      { id: 'doc-004', name: 'CNC加工中心-A2 安装调试报告.pdf', uploadTime: '2023-03-10', url: '#' },
+      { id: 'doc-005', name: 'CNC加工中心-A2 巡检记录.xlsx', uploadTime: '2024-Q1', url: '#' },
+    ],
+    recentEvents: [
+      { time: '2024-01-15 10:30', type: 'warning', description: '振动值偏高：当前0.32mm/s', source: '报警规则 #R001' },
+      { time: '2024-01-15 08:00', type: 'start', description: '设备远程启动', source: '操作日志' },
+      { time: '2024-01-14 22:00', type: 'stop', description: '设备正常停机', source: '操作日志' },
+      { time: '2024-01-15 09:30', type: 'warning', description: '健康评分下降：当前78分', source: '系统监控' },
+    ],
+    maintenanceRecords: [
+      { time: '2023-11-15', workOrderId: 'wo-067', workOrderCode: 'WO-067', type: '故障维修', faultDescription: '主轴异响', result: '更换轴承', technician: '王工' },
+      { time: '2023-09-20', workOrderId: 'wo-055', workOrderCode: 'WO-055', type: '预防性维护', faultDescription: '定期保养', result: '更换润滑油', technician: '李工' },
+    ],
+  },
+  'dev-003': {
+    basicInfo: {
+      id: 'dev-003',
+      name: '焊接机器人-B1',
+      code: 'ROB-001',
+      type: '焊接机器人',
+      model: 'ABB-IRB6700',
+      location: 'B区-2号车间',
+      commissionDate: '2022-08-15',
+      department: '焊接车间',
+      responsiblePerson: '李明',
+      manufacturer: 'ABB',
+      status: 'running',
+      gatewayId: 'gw-002',
+      gatewayName: '网关-GW-02',
+      healthScore: 88,
+    },
+    boundPoints: [
+      {
+        pointId: 'p-005',
+        pointName: '机器人温度',
+        gatewayId: 'gw-002',
+        gatewayName: '网关-GW-02',
+        currentValue: 68.2,
+        unit: '°C',
+        updateTime: new Date().toISOString(),
+        status: 'normal',
+        thresholdWarning: 75,
+        thresholdAlarm: 85,
+      },
+      {
+        pointId: 'p-006',
+        pointName: '关节振动',
+        gatewayId: 'gw-002',
+        gatewayName: '网关-GW-02',
+        currentValue: 0.18,
+        unit: 'mm/s',
+        updateTime: new Date().toISOString(),
+        status: 'normal',
+        thresholdWarning: 0.3,
+        thresholdAlarm: 0.5,
+      },
+    ],
+    runningStatus: {
+      isRunning: true,
+      currentPower: 45,
+      loadRate: 82,
+      currentSpeed: 120,
+      cumulativeHours: 15600,
+      currentSessionHours: 72,
+      monthHours: 412,
+      yearHours: 2850,
+      startStopRecords: [
+        { time: '2024-01-12 08:00', action: 'start' },
+        { time: '2024-01-11 23:00', action: 'stop' },
+        { time: '2024-01-11 08:00', action: 'start' },
+      ],
+    },
+    relatedKnowledge: [
+      { id: 'k-005', title: 'ABB机器人焊接参数优化指南', type: 'manual' },
+      { id: 'k-006', title: '机器人关节故障排查案例（案例 #035）', type: 'case' },
+    ],
+    documents: [
+      { id: 'doc-006', name: 'ABB-IRB6700 安装调试报告.pdf', uploadTime: '2022-08-01', url: '#' },
+      { id: 'doc-007', name: '焊接机器人操作规程.pdf', uploadTime: '2022-08-15', url: '#' },
+    ],
+    recentEvents: [
+      { time: '2024-01-15 08:00', type: 'info', description: '定期维护提醒：设备已运行15600小时', source: '系统监控' },
+      { time: '2024-01-12 08:00', type: 'start', description: '设备启动', source: '操作日志' },
+      { time: '2024-01-11 23:00', type: 'stop', description: '设备停机', source: '操作日志' },
+    ],
+    maintenanceRecords: [
+      { time: '2024-01-10', workOrderId: 'wo-099', workOrderCode: 'WO-099', type: '预防性维护', faultDescription: '关节保养', result: '更换润滑脂', technician: '李明' },
+      { time: '2023-10-05', workOrderId: 'wo-078', workOrderCode: 'WO-078', type: '故障维修', faultDescription: '焊接枪故障', result: '更换焊接枪', technician: '王工' },
+    ],
+  },
+  'dev-004': {
+    basicInfo: {
+      id: 'dev-004',
+      name: '焊接机器人-B2',
+      code: 'ROB-002',
+      type: '焊接机器人',
+      model: 'ABB-IRB6700',
+      location: 'B区-2号车间',
+      commissionDate: '2022-08-15',
+      department: '焊接车间',
+      responsiblePerson: '李明',
+      manufacturer: 'ABB',
+      status: 'maintenance',
+      gatewayId: 'gw-002',
+      gatewayName: '网关-GW-02',
+      healthScore: 45,
+    },
+    boundPoints: [
+      {
+        pointId: 'p-005',
+        pointName: '机器人温度',
+        gatewayId: 'gw-002',
+        gatewayName: '网关-GW-02',
+        currentValue: 92.5,
+        unit: '°C',
+        updateTime: new Date().toISOString(),
+        status: 'alarm',
+        thresholdWarning: 75,
+        thresholdAlarm: 85,
+      },
+    ],
+    runningStatus: {
+      isRunning: false,
+      currentPower: 0,
+      loadRate: 0,
+      currentSpeed: 0,
+      cumulativeHours: 2340,
+      currentSessionHours: 0,
+      monthHours: 156,
+      yearHours: 420,
+      startStopRecords: [
+        { time: '2024-01-08 08:00', action: 'start' },
+        { time: '2024-01-15 10:00', action: 'stop' },
+      ],
+    },
+    relatedKnowledge: [
+      { id: 'k-007', title: '机器人温度异常故障处理（故障码 E-201）', type: 'faultCode' },
+      { id: 'k-005', title: 'ABB机器人焊接参数优化指南', type: 'manual' },
+    ],
+    documents: [
+      { id: 'doc-008', name: 'ABB-IRB6700-B2 安装调试报告.pdf', uploadTime: '2022-08-01', url: '#' },
+    ],
+    recentEvents: [
+      { time: '2024-01-15 10:23', type: 'alarm', description: '温度异常告警：当前温度92°C', source: '报警规则 #R002' },
+      { time: '2024-01-15 10:00', type: 'stop', description: '设备故障停机', source: '系统监控' },
+      { time: '2024-01-08 08:00', type: 'start', description: '设备启动', source: '操作日志' },
+    ],
+    maintenanceRecords: [
+      { time: '2023-11-20', workOrderId: 'wo-072', workOrderCode: 'WO-072', type: '故障维修', faultDescription: '电机过热', result: '更换冷却风扇', technician: '李明' },
+    ],
+  },
+  'dev-005': {
+    basicInfo: {
+      id: 'dev-005',
+      name: '传送带-C1',
+      code: 'CONV-001',
+      type: '传送带',
+      model: 'SIEMENS-AS400',
+      location: 'C区-3号车间',
+      commissionDate: '2021-06-10',
+      department: '物流部',
+      responsiblePerson: '张伟',
+      manufacturer: '西门子',
+      status: 'maintenance',
+      gatewayId: 'gw-003',
+      gatewayName: '网关-GW-03',
+      healthScore: 0,
+    },
+    boundPoints: [],
+    runningStatus: {
+      isRunning: false,
+      currentPower: 0,
+      loadRate: 0,
+      currentSpeed: 0,
+      cumulativeHours: 4200,
+      currentSessionHours: 0,
+      monthHours: 0,
+      yearHours: 890,
+      startStopRecords: [
+        { time: '2024-01-10 08:00', action: 'start' },
+        { time: '2024-01-13 14:00', action: 'stop' },
+      ],
+    },
+    relatedKnowledge: [
+      { id: 'k-008', title: '传送带维护保养手册', type: 'manual' },
+    ],
+    documents: [
+      { id: 'doc-009', name: '传送带安装调试报告.pdf', uploadTime: '2021-06-01', url: '#' },
+    ],
+    recentEvents: [
+      { time: '2024-01-13 14:00', type: 'info', description: '设备离线：进入维护模式', source: '操作日志' },
+      { time: '2024-01-10 08:00', type: 'start', description: '设备启动', source: '操作日志' },
+    ],
+    maintenanceRecords: [
+      { time: '2024-01-13', workOrderId: 'wo-105', workOrderCode: 'WO-105', type: '故障维修', faultDescription: '皮带断裂', result: '更换传送带', technician: '张伟' },
+    ],
+  },
+  'dev-006': {
+    basicInfo: {
+      id: 'dev-006',
+      name: 'PLC控制柜-D1',
+      code: 'PLC-001',
+      type: 'PLC控制柜',
+      model: 'SIEMENS-S7-1500',
+      location: 'D区-4号车间',
+      commissionDate: '2023-01-15',
+      department: '电气部',
+      responsiblePerson: '刘洋',
+      manufacturer: '西门子',
+      status: 'running',
+      gatewayId: 'gw-004',
+      gatewayName: '网关-GW-04',
+      healthScore: 95,
+    },
+    boundPoints: [
+      {
+        pointId: 'p-009',
+        pointName: 'CPU温度',
+        gatewayId: 'gw-004',
+        gatewayName: '网关-GW-04',
+        currentValue: 45.2,
+        unit: '°C',
+        updateTime: new Date().toISOString(),
+        status: 'normal',
+        thresholdWarning: 55,
+        thresholdAlarm: 65,
+      },
+      {
+        pointId: 'p-010',
+        pointName: '内存使用率',
+        gatewayId: 'gw-004',
+        gatewayName: '网关-GW-04',
+        currentValue: 62,
+        unit: '%',
+        updateTime: new Date().toISOString(),
+        status: 'normal',
+        thresholdWarning: 80,
+        thresholdAlarm: 90,
+      },
+    ],
+    runningStatus: {
+      isRunning: true,
+      currentPower: 15,
+      loadRate: 45,
+      currentSpeed: 0,
+      cumulativeHours: 8900,
+      currentSessionHours: 168,
+      monthHours: 480,
+      yearHours: 3200,
+      startStopRecords: [
+        { time: '2024-01-08 08:00', action: 'start' },
+      ],
+    },
+    relatedKnowledge: [
+      { id: 'k-009', title: 'SIEMENS S7-1500 编程手册', type: 'manual' },
+      { id: 'k-010', title: 'PLC故障代码速查手册', type: 'faultCode' },
+    ],
+    documents: [
+      { id: 'doc-010', name: 'PLC控制柜原理图.pdf', uploadTime: '2023-01-10', url: '#' },
+      { id: 'doc-011', name: 'PLC程序备份.zip', uploadTime: '2024-01-01', url: '#' },
+    ],
+    recentEvents: [
+      { time: '2024-01-15 09:00', type: 'info', description: '系统自检通过，所有采集点正常', source: '系统监控' },
+      { time: '2024-01-08 08:00', type: 'start', description: '系统启动', source: '操作日志' },
+    ],
+    maintenanceRecords: [],
+  },
+  'dev-007': {
+    basicInfo: {
+      id: 'dev-007',
+      name: '测试设备-T1',
+      code: 'TEST-001',
+      type: '测试设备',
+      model: 'TEST-MODEL',
+      location: '测试区',
+      commissionDate: '2024-01-01',
+      department: '研发部',
+      responsiblePerson: '赵强',
+      manufacturer: '自研',
+      status: 'maintenance',
+      gatewayId: 'gw-005',
+      gatewayName: '网关-GW-05',
+      healthScore: 30,
+    },
+    boundPoints: [
+      {
+        pointId: 'p-011',
+        pointName: '测试温度',
+        gatewayId: 'gw-005',
+        gatewayName: '网关-GW-05',
+        currentValue: 88.5,
+        unit: '°C',
+        updateTime: new Date().toISOString(),
+        status: 'alarm',
+        thresholdWarning: 75,
+        thresholdAlarm: 85,
+      },
+      {
+        pointId: 'p-012',
+        pointName: '测试振动',
+        gatewayId: 'gw-005',
+        gatewayName: '网关-GW-05',
+        currentValue: 0.45,
+        unit: 'mm/s',
+        updateTime: new Date().toISOString(),
+        status: 'warning',
+        thresholdWarning: 0.3,
+        thresholdAlarm: 0.5,
+      },
+    ],
+    runningStatus: {
+      isRunning: false,
+      currentPower: 0,
+      loadRate: 0,
+      currentSpeed: 0,
+      cumulativeHours: 560,
+      currentSessionHours: 0,
+      monthHours: 280,
+      yearHours: 280,
+      startStopRecords: [
+        { time: '2024-01-14 08:00', action: 'start' },
+        { time: '2024-01-15 10:00', action: 'stop' },
+      ],
+    },
+    relatedKnowledge: [],
+    documents: [],
+    recentEvents: [
+      { time: '2024-01-15 10:23', type: 'alarm', description: '设备故障：温度过高且振动异常', source: '系统监控' },
+      { time: '2024-01-15 10:00', type: 'stop', description: '设备故障停机', source: '系统监控' },
+      { time: '2024-01-14 08:00', type: 'start', description: '设备启动', source: '操作日志' },
+    ],
+    maintenanceRecords: [],
+  },
+  'dev-008': {
+    basicInfo: {
+      id: 'dev-008',
+      name: '传送带-C2',
+      code: 'CONV-002',
+      type: '传送带',
+      model: 'SIEMENS-AS400',
+      location: 'C区-3号车间',
+      commissionDate: '2020-05-10',
+      department: '物流部',
+      responsiblePerson: '张伟',
+      manufacturer: '西门子',
+      status: 'stopped',
+      gatewayId: 'gw-003',
+      gatewayName: '网关-GW-03',
+      healthScore: 0,
+    },
+    boundPoints: [],
+    runningStatus: {
+      isRunning: false,
+      currentPower: 0,
+      loadRate: 0,
+      currentSpeed: 0,
+      cumulativeHours: 8200,
+      currentSessionHours: 0,
+      monthHours: 0,
+      yearHours: 0,
+      startStopRecords: [
+        { time: '2023-12-01 08:00', action: 'start' },
+        { time: '2023-12-20 14:00', action: 'stop' },
+      ],
+    },
+    relatedKnowledge: [
+      { id: 'k-008', title: '传送带维护保养手册', type: 'manual' },
+    ],
+    documents: [],
+    recentEvents: [
+      { time: '2023-12-20 14:00', type: 'info', description: '设备退役', source: '操作日志' },
+    ],
+    maintenanceRecords: [],
+  },
+};
+
+export function mockHistoryData(pointId: string, range: '1h' | '6h' | '12h' | '24h'): HistoryDataPoint[] {
+  const data: HistoryDataPoint[] = [];
+  const now = Date.now();
+  let interval = 3600000;
+  let count = 24;
+  
+  switch (range) {
+    case '1h':
+      interval = 60000;
+      count = 60;
+      break;
+    case '6h':
+      interval = 60000;
+      count = 360;
+      break;
+    case '12h':
+      interval = 120000;
+      count = 360;
+      break;
+    case '24h':
+    default:
+      interval = 3600000;
+      count = 24;
+  }
+  
+  const baseValue = pointId.includes('temp') || pointId.includes('温度') ? 75 : 
+                    pointId.includes('vibration') || pointId.includes('振动') ? 0.25 :
+                    pointId.includes('speed') || pointId.includes('转速') ? 3500 :
+                    pointId.includes('current') || pointId.includes('电流') ? 85 : 50;
+  const variance = pointId.includes('temp') || pointId.includes('温度') ? 15 : 
+                   pointId.includes('vibration') || pointId.includes('振动') ? 0.15 :
+                   pointId.includes('speed') || pointId.includes('转速') ? 500 :
+                   pointId.includes('current') || pointId.includes('电流') ? 30 : 10;
+  
+  for (let i = count; i >= 0; i--) {
+    data.push({
+      timestamp: now - i * interval,
+      value: baseValue + (Math.random() - 0.5) * variance,
+    });
+  }
+  
+  return data;
+}

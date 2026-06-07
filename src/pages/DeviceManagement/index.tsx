@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, LinkOutlined, PlayCircleOutlined, DesktopOutlined, HeatMapOutlined, ClockCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Modal, Form, Input, Select, Card, Tag, Timeline, Row, Col, message, Pagination } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, LinkOutlined, DesktopOutlined, HeatMapOutlined, ClockCircleOutlined, SearchOutlined, AppstoreOutlined, OrderedListOutlined } from '@ant-design/icons';
+import { Button, Modal, Form, Input, Select, Card, Tag, Row, Col, message, Pagination, Table } from 'antd';
 import { useAppStore } from '../../stores';
 import StatusBadge from '../../components/Common/StatusBadge';
 import type { Device } from '../../types';
-import { lifecycleStages, mockLifecycleEvents } from '../../mocks/devices';
+import { lifecycleStages } from '../../mocks/devices';
+import DeviceDetailModal from './DeviceDetailModal';
 
 const { Option } = Select;
 
@@ -22,10 +23,12 @@ export default function DeviceManagement() {
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [isBindModalVisible, setIsBindModalVisible] = useState(false);
   const [editingDevice, setEditingDevice] = useState<Device | null>(null);
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
   const [selectedDeviceForBinding, setSelectedDeviceForBinding] = useState<string | null>(null);
   const [form] = Form.useForm();
   const [searchKeyword, setSearchKeyword] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
   const pageSize = 9;
 
   const { devices, gateways, dataPoints, addDevice, updateDevice, deleteDevice, bindDataPoint, unbindDataPoint } = useAppStore();
@@ -53,6 +56,12 @@ export default function DeviceManagement() {
 
   const showDetailModal = (device: Device) => {
     setEditingDevice(device);
+    setSelectedDeviceId(device.id);
+    setIsDetailModalVisible(true);
+  };
+
+  const handleCardClick = (device: Device) => {
+    setSelectedDeviceId(device.id);
     setIsDetailModalVisible(true);
   };
 
@@ -118,7 +127,6 @@ export default function DeviceManagement() {
   };
 
   const device = editingDevice;
-  const lifecycleEvents = device ? mockLifecycleEvents[device.id] || [] : [];
 
   const unboundPoints = dataPoints.filter(p => !device?.boundPoints.includes(p.id));
 
@@ -136,100 +144,199 @@ export default function DeviceManagement() {
           }}
           allowClear
         />
-        <Button icon={<PlusOutlined />} type="primary" onClick={showAddModal}>新增设备</Button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              padding: '0 8px',
+              width: 72,
+              height: 32,
+              backgroundColor: '#f0f0f0',
+              borderRadius: 16,
+              cursor: 'pointer',
+              position: 'relative',
+              transition: 'background-color 0.2s',
+            }}
+            onClick={() => setViewMode(viewMode === 'card' ? 'list' : 'card')}
+          >
+            <AppstoreOutlined style={{ fontSize: 16, color: viewMode === 'card' ? '#1890ff' : '#999', transition: 'color 0.2s' }} />
+            <OrderedListOutlined style={{ fontSize: 16, color: viewMode === 'list' ? '#1890ff' : '#999', transition: 'color 0.2s' }} />
+            <div 
+              style={{ 
+                position: 'absolute',
+                width: 28,
+                height: 28,
+                backgroundColor: '#fff',
+                borderRadius: '50%',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                transform: viewMode === 'card' ? 'translateX(0)' : 'translateX(34px)',
+                transition: 'transform 0.2s',
+              }}
+            />
+          </div>
+          <Button icon={<PlusOutlined />} type="primary" onClick={showAddModal}>新增设备</Button>
+        </div>
       </div>
 
-      <Row gutter={16} style={{ marginBottom: 16 }}>
-        {paginatedDevices.map(device => (
-          <Col span={8} key={device.id} style={{ marginBottom: 16 }}>
-            <Card 
-              hoverable
-              style={{ height: '100%' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+      {viewMode === 'card' ? (
+        <Row gutter={16} style={{ marginBottom: 16 }}>
+          {paginatedDevices.map(device => (
+            <Col span={8} key={device.id} style={{ marginBottom: 16 }}>
+              <Card 
+                hoverable
+                style={{ height: '100%', cursor: 'pointer' }}
+                onClick={() => handleCardClick(device)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <DesktopOutlined style={{ fontSize: 24, color: '#1890ff' }} />
+                    <div>
+                      <div style={{ fontWeight: 'bold', fontSize: 16 }}>{device.name}</div>
+                      <div style={{ color: '#666', fontSize: 12 }}>{device.code}</div>
+                    </div>
+                  </div>
+                  <StatusBadge status={device.status} />
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#666', fontSize: 12 }}>型号</span>
+                    <span style={{ fontSize: 12 }}>{device.model}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#666', fontSize: 12 }}>位置</span>
+                    <span style={{ fontSize: 12 }}>{device.location}</span>
+                  </div>
+                </div>
+
+                {device.hasStartStopPoint && (
+                  <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: 12, marginTop: 12 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#666', fontSize: 12 }}>累计运行</span>
+                        <span style={{ fontSize: 12, color: '#1890ff', fontWeight: 'bold' }}>{formatHours(device.cumulativeOperatingHours)}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#666', fontSize: 12 }}>当前运行</span>
+                        <span style={{ fontSize: 12, color: '#52C41A', fontWeight: 'bold' }}>{device.currentRunHours > 0 ? formatHours(device.currentRunHours) : '-'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#666', fontSize: 12 }}>故障时长</span>
+                        <span style={{ fontSize: 12, color: device.faultHours > 100 ? '#FF4D4F' : '#FAAD14', fontWeight: 'bold' }}>
+                          {device.faultHours > 0 ? formatHours(device.faultHours) : '-'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: 12, marginTop: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <HeatMapOutlined style={{ fontSize: 14, color: '#FF6B6B' }} />
+                      <span style={{ fontSize: 12 }}>{device.temperature}°C</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <ClockCircleOutlined style={{ fontSize: 14, color: '#4ECDC4' }} />
+                      <span style={{ fontSize: 12 }}>{device.vibration}mm/s</span>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ color: '#666', fontSize: 12 }}>健康评分</span>
+                      <span style={{ color: device.healthScore >= 80 ? '#52C41A' : device.healthScore >= 60 ? '#FAAD14' : '#FF4D4F', fontWeight: 'bold' }}>
+                        {device.healthScore}分
+                      </span>
+                    </div>
+                    <div style={{ height: 6, backgroundColor: '#f0f0f0', borderRadius: 3, overflow: 'hidden' }}>
+                      <div 
+                        style={{ 
+                          height: '100%', 
+                          width: `${device.healthScore}%`,
+                          backgroundColor: device.healthScore >= 80 ? '#52C41A' : device.healthScore >= 60 ? '#FAAD14' : '#FF4D4F',
+                          borderRadius: 3
+                        }} 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+                  <Button icon={<EyeOutlined />} size="small" onClick={(e) => { e.stopPropagation(); showDetailModal(device); }}>详情</Button>
+                  <Button icon={<LinkOutlined />} size="small" onClick={(e) => { e.stopPropagation(); showBindModal(device.id); }}>绑定</Button>
+                  <Button icon={<EditOutlined />} size="small" onClick={(e) => { e.stopPropagation(); showEditModal(device); }}>编辑</Button>
+                  <Button icon={<DeleteOutlined />} size="small" danger onClick={(e) => { e.stopPropagation(); handleDelete(device.id); }}>删除</Button>
+                </div>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <Table
+          dataSource={paginatedDevices}
+          rowKey="id"
+          pagination={false}
+          columns={[
+            {
+              title: '设备信息',
+              key: 'info',
+              render: (_: unknown, device: Device) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <DesktopOutlined style={{ fontSize: 24, color: '#1890ff' }} />
+                  <DesktopOutlined style={{ fontSize: 20, color: '#1890ff' }} />
                   <div>
-                    <div style={{ fontWeight: 'bold', fontSize: 16 }}>{device.name}</div>
+                    <div style={{ fontWeight: 'bold' }}>{device.name}</div>
                     <div style={{ color: '#666', fontSize: 12 }}>{device.code}</div>
                   </div>
                 </div>
-                <StatusBadge status={device.status} />
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#666', fontSize: 12 }}>型号</span>
-                  <span style={{ fontSize: 12 }}>{device.model}</span>
+              ),
+            },
+            { title: '型号', dataIndex: 'model', key: 'model' },
+            { title: '位置', dataIndex: 'location', key: 'location' },
+            {
+              title: '状态',
+              key: 'status',
+              render: (_: unknown, device: Device) => <StatusBadge status={device.status} />,
+            },
+            {
+              title: '温度',
+              key: 'temperature',
+              render: (_: unknown, device: Device) => (
+                <span>{device.temperature}°C</span>
+              ),
+            },
+            {
+              title: '振动',
+              key: 'vibration',
+              render: (_: unknown, device: Device) => (
+                <span>{device.vibration}mm/s</span>
+              ),
+            },
+            {
+              title: '健康评分',
+              key: 'healthScore',
+              render: (_: unknown, device: Device) => (
+                <span style={{ color: device.healthScore >= 80 ? '#52C41A' : device.healthScore >= 60 ? '#FAAD14' : '#FF4D4F', fontWeight: 'bold' }}>
+                  {device.healthScore}分
+                </span>
+              ),
+            },
+            {
+              title: '操作',
+              key: 'action',
+              render: (_: unknown, device: Device) => (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Button icon={<EyeOutlined />} size="small" onClick={() => showDetailModal(device)}>详情</Button>
+                  <Button icon={<LinkOutlined />} size="small" onClick={() => showBindModal(device.id)}>绑定</Button>
+                  <Button icon={<EditOutlined />} size="small" onClick={() => showEditModal(device)}>编辑</Button>
+                  <Button icon={<DeleteOutlined />} size="small" danger onClick={() => handleDelete(device.id)}>删除</Button>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#666', fontSize: 12 }}>位置</span>
-                  <span style={{ fontSize: 12 }}>{device.location}</span>
-                </div>
-              </div>
-
-              {device.hasStartStopPoint && (
-                <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: 12, marginTop: 12 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#666', fontSize: 12 }}>累计运行</span>
-                      <span style={{ fontSize: 12, color: '#1890ff', fontWeight: 'bold' }}>{formatHours(device.cumulativeOperatingHours)}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#666', fontSize: 12 }}>当前运行</span>
-                      <span style={{ fontSize: 12, color: '#52C41A', fontWeight: 'bold' }}>{device.currentRunHours > 0 ? formatHours(device.currentRunHours) : '-'}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#666', fontSize: 12 }}>故障时长</span>
-                      <span style={{ fontSize: 12, color: device.faultHours > 100 ? '#FF4D4F' : '#FAAD14', fontWeight: 'bold' }}>
-                        {device.faultHours > 0 ? formatHours(device.faultHours) : '-'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: 12, marginTop: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <HeatMapOutlined style={{ fontSize: 14, color: '#FF6B6B' }} />
-                    <span style={{ fontSize: 12 }}>{device.temperature}°C</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <ClockCircleOutlined style={{ fontSize: 14, color: '#4ECDC4' }} />
-                    <span style={{ fontSize: 12 }}>{device.vibration}mm/s</span>
-                  </div>
-                </div>
-                <div style={{ marginTop: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ color: '#666', fontSize: 12 }}>健康评分</span>
-                    <span style={{ color: device.healthScore >= 80 ? '#52C41A' : device.healthScore >= 60 ? '#FAAD14' : '#FF4D4F', fontWeight: 'bold' }}>
-                      {device.healthScore}分
-                    </span>
-                  </div>
-                  <div style={{ height: 6, backgroundColor: '#f0f0f0', borderRadius: 3, overflow: 'hidden' }}>
-                    <div 
-                      style={{ 
-                        height: '100%', 
-                        width: `${device.healthScore}%`,
-                        backgroundColor: device.healthScore >= 80 ? '#52C41A' : device.healthScore >= 60 ? '#FAAD14' : '#FF4D4F',
-                        borderRadius: 3
-                      }} 
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-                <Button icon={<EyeOutlined />} size="small" onClick={() => showDetailModal(device)}>详情</Button>
-                <Button icon={<LinkOutlined />} size="small" onClick={() => showBindModal(device.id)}>绑定</Button>
-                <Button icon={<EditOutlined />} size="small" onClick={() => showEditModal(device)}>编辑</Button>
-                <Button icon={<DeleteOutlined />} size="small" danger onClick={() => handleDelete(device.id)}>删除</Button>
-              </div>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+              ),
+            },
+          ]}
+        />
+      )}
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
         <Pagination
@@ -274,99 +381,11 @@ export default function DeviceManagement() {
         </Form>
       </Modal>
 
-      <Modal
-        title={`设备详情 - ${editingDevice?.name}`}
+      <DeviceDetailModal
         open={isDetailModalVisible}
-        onCancel={() => setIsDetailModalVisible(false)}
-        width={900}
-      >
-        {device && (
-          <div style={{ display: 'flex', gap: 24 }}>
-            <div style={{ flex: 1 }}>
-              <h3>基本信息</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div>
-                  <span style={{ color: '#666' }}>设备编码：</span>
-                  <span>{device.code}</span>
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>设备名称：</span>
-                  <span>{device.name}</span>
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>型号：</span>
-                  <span>{device.model}</span>
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>状态：</span>
-                  <StatusBadge status={device.status} />
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>位置：</span>
-                  <span>{device.location}</span>
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>温度：</span>
-                  <span>{device.temperature}°C</span>
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>振动：</span>
-                  <span>{device.vibration}mm/s</span>
-                </div>
-                <div>
-                  <span style={{ color: '#666' }}>健康评分：</span>
-                  <span style={{ color: device.healthScore >= 80 ? '#52C41A' : device.healthScore >= 60 ? '#FAAD14' : '#FF4D4F' }}>
-                    {device.healthScore}分
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div style={{ flex: 1 }}>
-              <h3>运行信息</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div>
-                  <span style={{ color: '#666' }}>开停机采集点：</span>
-                  <Tag icon={device.hasStartStopPoint ? <PlayCircleOutlined /> : undefined} color={device.hasStartStopPoint ? 'green' : 'default'}>
-                    {device.hasStartStopPoint ? '有' : '无'}
-                  </Tag>
-                </div>
-                {device.hasStartStopPoint && (
-                  <>
-                    <div>
-                      <span style={{ color: '#666' }}>累计运行时间：</span>
-                      <span style={{ fontWeight: 'bold', color: '#1890ff' }}>{formatHours(device.cumulativeOperatingHours)}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: '#666' }}>上次开机时间：</span>
-                      <span>{device.lastStartTime > 0 ? new Date(device.lastStartTime).toLocaleString('zh-CN') : '-'}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: '#666' }}>当前连续运行：</span>
-                      <span style={{ fontWeight: 'bold', color: '#52C41A' }}>{device.currentRunHours > 0 ? formatHours(device.currentRunHours) : '-'}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: '#666' }}>故障运行时间：</span>
-                      <span style={{ fontWeight: 'bold', color: device.faultHours > 100 ? '#FF4D4F' : '#FAAD14' }}>
-                        {device.faultHours > 0 ? formatHours(device.faultHours) : '-'}
-                      </span>
-                    </div>
-                  </>
-                )}
-              </div>
-              <h3 style={{ marginTop: 24 }}>生命周期时间轴</h3>
-              <Timeline mode="left">
-                {lifecycleEvents.map((event, index) => (
-                  <Timeline.Item key={index}>
-                    <div>{event.stage}</div>
-                    <div style={{ color: '#666', fontSize: 12 }}>{event.date}</div>
-                    <div style={{ color: '#999', fontSize: 12 }}>{event.description}</div>
-                  </Timeline.Item>
-                ))}
-              </Timeline>
-            </div>
-          </div>
-        )}
-      </Modal>
+        onClose={() => setIsDetailModalVisible(false)}
+        deviceId={selectedDeviceId || ''}
+      />
 
       <Modal
         title="绑定采集点"

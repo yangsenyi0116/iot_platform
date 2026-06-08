@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Modal, Descriptions, Table, Tag, Button, Card, Row, Col } from 'antd';
+import { Modal, Descriptions, Table, Tag, Button, Card, Row, Col, Tabs } from 'antd';
 import {
   FileTextOutlined, BookOutlined, AlertOutlined,
   PlayCircleOutlined, CheckCircleOutlined, DownloadOutlined,
@@ -7,6 +7,8 @@ import {
   SettingOutlined, PoweroffOutlined,
   ToolOutlined
 } from '@ant-design/icons';
+
+const { TabPane } = Tabs;
 import {
   type DeviceDetail, type BoundPoint, type HistoryDataPoint
 } from '../../types';
@@ -191,14 +193,6 @@ export default function DeviceDetailModal({ open, onClose, deviceId }: DeviceDet
     setShowHistoryModal(true);
   };
 
-  const handleGenerateWorkOrder = () => {
-    onClose();
-  };
-
-  const handleViewAlarmHistory = () => {
-    onClose();
-  };
-
   const handleGoToTwin = () => {
     onClose();
   };
@@ -303,246 +297,253 @@ export default function DeviceDetailModal({ open, onClose, deviceId }: DeviceDet
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <div style={{ display: 'flex', gap: 8 }}>
-              <Button icon={<ForkOutlined />} onClick={handleGenerateWorkOrder}>生成工单</Button>
-              <Button icon={<AlertOutlined />} onClick={handleViewAlarmHistory}>查看报警历史</Button>
               <Button icon={<FileSearchOutlined />} onClick={handleGoToTwin}>跳转到孪生场景</Button>
             </div>
             <Button onClick={onClose}>关闭</Button>
           </div>
         }
       >
-        <Card size="small" title="基本信息" style={{ marginBottom: 16 }}>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Descriptions column={1} size="small" bordered>
-                <Descriptions.Item label="设备名称">{basicInfo.name}</Descriptions.Item>
-                <Descriptions.Item label="设备编码">{basicInfo.code}</Descriptions.Item>
-                <Descriptions.Item label="设备类型">{basicInfo.type}</Descriptions.Item>
-                <Descriptions.Item label="设备型号">{basicInfo.model}</Descriptions.Item>
-                <Descriptions.Item label="安装位置">{basicInfo.location}</Descriptions.Item>
-              </Descriptions>
-            </Col>
-            <Col span={12}>
-              <Descriptions column={1} size="small" bordered>
-                <Descriptions.Item label="投运时间">{basicInfo.commissionDate}</Descriptions.Item>
-                <Descriptions.Item label="负责部门">{basicInfo.department}</Descriptions.Item>
-                <Descriptions.Item label="负责人">{basicInfo.responsiblePerson}</Descriptions.Item>
-                <Descriptions.Item label="制造商">{basicInfo.manufacturer}</Descriptions.Item>
-                <Descriptions.Item label="关联网关">{basicInfo.gatewayName}</Descriptions.Item>
-              </Descriptions>
-            </Col>
-          </Row>
-          <div style={{ marginTop: 16, padding: 12, background: '#f6ffed', borderRadius: 6 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <CheckCircleOutlined style={{ color: '#52c41a', fontSize: 20 }} />
-              <div>
-                <span style={{ fontWeight: 600 }}>健康评分：</span>
-                <span style={{ color: basicInfo.healthScore >= 80 ? '#52c41a' : basicInfo.healthScore >= 60 ? '#faad14' : '#ff4d4f', fontWeight: 600, fontSize: 18 }}>
-                  {basicInfo.healthScore}分
-                </span>
-              </div>
-              <div style={{ flex: 1 }} />
-              <div style={{ height: 6, width: 200, backgroundColor: '#e8e8e8', borderRadius: 3, overflow: 'hidden' }}>
-                <div
-                  style={{
-                    height: '100%',
-                    width: `${basicInfo.healthScore}%`,
-                    backgroundColor: basicInfo.healthScore >= 80 ? '#52c41a' : basicInfo.healthScore >= 60 ? '#faad14' : '#ff4d4f',
-                    borderRadius: 3,
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        <Card size="small" title="测点数据" style={{ marginBottom: 16 }}>
-          {points.length > 0 ? (
-            <Table
-              dataSource={points}
-              columns={pointColumns}
-              rowKey="pointId"
-              size="small"
-              pagination={false}
-            />
-          ) : (
-            <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
-              <FileTextOutlined style={{ fontSize: 48, marginBottom: 12, opacity: 0.5 }} />
-              <div>暂无绑定测点，请前往设备管理绑定</div>
-            </div>
-          )}
-        </Card>
-
-        <Card size="small" title="运行状态" style={{ marginBottom: 16 }}>
-          <Row gutter={16}>
-            <Col span={12}>
-              <div style={{ textAlign: 'center', padding: 20, background: runningStatus.isRunning ? '#f6ffed' : '#fff2f0', borderRadius: 8 }}>
-                <div style={{ fontSize: 48, marginBottom: 12 }}>
-                  {runningStatus.isRunning ? (
-                    <span style={{ color: '#52c41a' }}>●</span>
-                  ) : (
-                    <span style={{ color: '#ff4d4f' }}>○</span>
-                  )}
+        <Tabs defaultActiveKey="basic">
+          <TabPane tab="基础信息" key="basic">
+            <Card size="small" title="基本信息" style={{ marginBottom: 16 }}>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Descriptions column={1} size="small" bordered>
+                    <Descriptions.Item label="设备名称">{basicInfo.name}</Descriptions.Item>
+                    <Descriptions.Item label="设备编码">{basicInfo.code}</Descriptions.Item>
+                    <Descriptions.Item label="设备类型">{basicInfo.type}</Descriptions.Item>
+                    <Descriptions.Item label="设备型号">{basicInfo.model}</Descriptions.Item>
+                    <Descriptions.Item label="安装位置">{basicInfo.location}</Descriptions.Item>
+                  </Descriptions>
+                </Col>
+                <Col span={12}>
+                  <Descriptions column={1} size="small" bordered>
+                    <Descriptions.Item label="投运时间">{basicInfo.commissionDate}</Descriptions.Item>
+                    <Descriptions.Item label="负责部门">{basicInfo.department}</Descriptions.Item>
+                    <Descriptions.Item label="负责人">{basicInfo.responsiblePerson}</Descriptions.Item>
+                    <Descriptions.Item label="制造商">{basicInfo.manufacturer}</Descriptions.Item>
+                    <Descriptions.Item label="关联网关">{basicInfo.gatewayName}</Descriptions.Item>
+                  </Descriptions>
+                </Col>
+              </Row>
+              <div style={{ marginTop: 16, padding: 12, background: '#f6ffed', borderRadius: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircleOutlined style={{ color: '#52c41a', fontSize: 20 }} />
+                  <div>
+                    <span style={{ fontWeight: 600 }}>健康评分：</span>
+                    <span style={{ color: basicInfo.healthScore >= 80 ? '#52c41a' : basicInfo.healthScore >= 60 ? '#faad14' : '#ff4d4f', fontWeight: 600, fontSize: 18 }}>
+                      {basicInfo.healthScore}分
+                    </span>
+                  </div>
+                  <div style={{ flex: 1 }} />
+                  <div style={{ height: 6, width: 200, backgroundColor: '#e8e8e8', borderRadius: 3, overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${basicInfo.healthScore}%`,
+                        backgroundColor: basicInfo.healthScore >= 80 ? '#52c41a' : basicInfo.healthScore >= 60 ? '#faad14' : '#ff4d4f',
+                        borderRadius: 3,
+                      }}
+                    />
+                  </div>
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 600, color: runningStatus.isRunning ? '#52c41a' : '#ff4d4f' }}>
-                  {runningStatus.isRunning ? '运行中' : '已停机'}
-                </div>
-                {runningStatus.isRunning && (
-                  <div style={{ marginTop: 12 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                      <div>
-                        <div style={{ fontSize: 12, color: '#8c8c8c' }}>当前功率</div>
-                        <div style={{ fontSize: 18, fontWeight: 600 }}>{runningStatus.currentPower} <span style={{ fontSize: 12, fontWeight: 400 }}>kW</span></div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 12, color: '#8c8c8c' }}>当前负载率</div>
-                        <div style={{ fontSize: 18, fontWeight: 600 }}>{runningStatus.loadRate} <span style={{ fontSize: 12, fontWeight: 400 }}>%</span></div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 12, color: '#8c8c8c' }}>当前转速</div>
-                        <div style={{ fontSize: 18, fontWeight: 600 }}>{runningStatus.currentSpeed} <span style={{ fontSize: 12, fontWeight: 400 }}>rpm</span></div>
-                      </div>
+              </div>
+            </Card>
+
+            <Card size="small" title="文档与知识">
+              <Row gutter={16}>
+                <Col span={12}>
+                  <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>
+                    <BookOutlined style={{ marginRight: 4 }} /> 关联知识库
+                  </div>
+                  {relatedKnowledge.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {relatedKnowledge.map(item => (
+                        <div key={item.id} style={{ padding: 12, background: '#fafafa', borderRadius: 6, cursor: 'pointer' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <FileTextOutlined style={{ color: '#1890ff' }} />
+                            <span style={{ fontWeight: 500 }}>{item.title}</span>
+                            <Tag color="blue">
+                              {knowledgeTypeLabels[item.type]}
+                            </Tag>
+                          </div>
+                        </div>
+                      ))}
                     </div>
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: 20, color: '#999' }}>暂无关联知识</div>
+                  )}
+                </Col>
+                <Col span={12}>
+                  <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>
+                    <DownloadOutlined style={{ marginRight: 4 }} /> 设备文档
                   </div>
-                )}
-              </div>
-            </Col>
-            <Col span={12}>
-              <div style={{ padding: 16 }}>
-                <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>累计运行信息</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8c8c8c' }}>累计运行时间</span>
-                    <span style={{ fontWeight: 600, color: '#1890ff' }}>{runningStatus.cumulativeHours.toLocaleString()} 小时</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8c8c8c' }}>本次运行时长</span>
-                    <span style={{ fontWeight: 600, color: '#52c41a' }}>{runningStatus.currentSessionHours} 小时</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8c8c8c' }}>本月运行时长</span>
-                    <span style={{ fontWeight: 600 }}>{runningStatus.monthHours} 小时</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#8c8c8c' }}>本年度运行时长</span>
-                    <span style={{ fontWeight: 600 }}>{runningStatus.yearHours.toLocaleString()} 小时</span>
-                  </div>
-                </div>
-              </div>
-            </Col>
-          </Row>
-          <div style={{ marginTop: 16 }}>
-            <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>启停记录</div>
-            <Card size="small" style={{ maxHeight: 200, overflow: 'auto' }}>
-              {runningStatus.startStopRecords.length > 0 ? (
-                runningStatus.startStopRecords.map((record, index) => (
-                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: index < runningStatus.startStopRecords.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
-                    <span>{record.time}</span>
-                    <Tag color={record.action === 'start' ? 'green' : 'default'}>
-                      {record.action === 'start' ? '启动' : '停止'}
-                    </Tag>
-                  </div>
-                ))
+                  {documents.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {documents.map(doc => (
+                        <div key={doc.id} style={{ padding: 12, background: '#fafafa', borderRadius: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <FileTextOutlined style={{ color: '#52c41a' }} />
+                            <span>{doc.name}</span>
+                          </div>
+                          <span style={{ fontSize: 12, color: '#8c8c8c' }}>{doc.uploadTime}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: 20, color: '#999' }}>暂无设备文档</div>
+                  )}
+                </Col>
+              </Row>
+            </Card>
+          </TabPane>
+
+          <TabPane tab="运行信息" key="running">
+            <Card size="small" title="测点数据" style={{ marginBottom: 16 }}>
+              {points.length > 0 ? (
+                <Table
+                  dataSource={points}
+                  columns={pointColumns}
+                  rowKey="pointId"
+                  size="small"
+                  pagination={false}
+                />
               ) : (
-                <div style={{ textAlign: 'center', color: '#999', padding: 20 }}>暂无启停记录</div>
+                <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
+                  <FileTextOutlined style={{ fontSize: 48, marginBottom: 12, opacity: 0.5 }} />
+                  <div>暂无绑定测点，请前往设备管理绑定</div>
+                </div>
               )}
             </Card>
-          </div>
-        </Card>
 
-        <Card size="small" title="文档与知识" style={{ marginBottom: 16 }}>
-          <Row gutter={16}>
-            <Col span={12}>
-              <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>
-                <BookOutlined style={{ marginRight: 4 }} /> 关联知识库
-              </div>
-              {relatedKnowledge.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {relatedKnowledge.map(item => (
-                    <div key={item.id} style={{ padding: 12, background: '#fafafa', borderRadius: 6, cursor: 'pointer' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <FileTextOutlined style={{ color: '#1890ff' }} />
-                        <span style={{ fontWeight: 500 }}>{item.title}</span>
-                        <Tag color="blue">
-                          {knowledgeTypeLabels[item.type]}
+            <Card size="small" title="运行状态">
+              <Row gutter={16}>
+                <Col span={12}>
+                  <div style={{ textAlign: 'center', padding: 20, background: runningStatus.isRunning ? '#f6ffed' : '#fff2f0', borderRadius: 8 }}>
+                    <div style={{ fontSize: 48, marginBottom: 12 }}>
+                      {runningStatus.isRunning ? (
+                        <span style={{ color: '#52c41a' }}>●</span>
+                      ) : (
+                        <span style={{ color: '#ff4d4f' }}>○</span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 18, fontWeight: 600, color: runningStatus.isRunning ? '#52c41a' : '#ff4d4f' }}>
+                      {runningStatus.isRunning ? '运行中' : '已停机'}
+                    </div>
+                    {runningStatus.isRunning && (
+                      <div style={{ marginTop: 12 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                          <div>
+                            <div style={{ fontSize: 12, color: '#8c8c8c' }}>当前功率</div>
+                            <div style={{ fontSize: 18, fontWeight: 600 }}>{runningStatus.currentPower} <span style={{ fontSize: 12, fontWeight: 400 }}>kW</span></div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 12, color: '#8c8c8c' }}>当前负载率</div>
+                            <div style={{ fontSize: 18, fontWeight: 600 }}>{runningStatus.loadRate} <span style={{ fontSize: 12, fontWeight: 400 }}>%</span></div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 12, color: '#8c8c8c' }}>当前转速</div>
+                            <div style={{ fontSize: 18, fontWeight: 600 }}>{runningStatus.currentSpeed} <span style={{ fontSize: 12, fontWeight: 400 }}>rpm</span></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Col>
+                <Col span={12}>
+                  <div style={{ padding: 16 }}>
+                    <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>累计运行信息</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8c8c8c' }}>累计运行时间</span>
+                        <span style={{ fontWeight: 600, color: '#1890ff' }}>{runningStatus.cumulativeHours.toLocaleString()} 小时</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8c8c8c' }}>本次运行时长</span>
+                        <span style={{ fontWeight: 600, color: '#52c41a' }}>{runningStatus.currentSessionHours} 小时</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8c8c8c' }}>本月运行时长</span>
+                        <span style={{ fontWeight: 600 }}>{runningStatus.monthHours} 小时</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#8c8c8c' }}>本年度运行时长</span>
+                        <span style={{ fontWeight: 600 }}>{runningStatus.yearHours.toLocaleString()} 小时</span>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+              <div style={{ marginTop: 16 }}>
+                <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>启停记录</div>
+                <Card size="small" style={{ maxHeight: 200, overflow: 'auto' }}>
+                  {runningStatus.startStopRecords.length > 0 ? (
+                    runningStatus.startStopRecords.map((record, index) => (
+                      <div key={index} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: index < runningStatus.startStopRecords.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
+                        <span>{record.time}</span>
+                        <Tag color={record.action === 'start' ? 'green' : 'default'}>
+                          {record.action === 'start' ? '启动' : '停止'}
                         </Tag>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ textAlign: 'center', padding: 20, color: '#999' }}>暂无关联知识</div>
-              )}
-            </Col>
-            <Col span={12}>
-              <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>
-                <DownloadOutlined style={{ marginRight: 4 }} /> 设备文档
+                    ))
+                  ) : (
+                    <div style={{ textAlign: 'center', color: '#999', padding: 20 }}>暂无启停记录</div>
+                  )}
+                </Card>
               </div>
-              {documents.length > 0 ? (
+            </Card>
+          </TabPane>
+
+          <TabPane tab="维修记录" key="maintenance">
+            <Card size="small" title="最近事件" style={{ marginBottom: 16 }}>
+              {recentEvents.length > 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {documents.map(doc => (
-                    <div key={doc.id} style={{ padding: 12, background: '#fafafa', borderRadius: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <FileTextOutlined style={{ color: '#52c41a' }} />
-                        <span>{doc.name}</span>
+                  {recentEvents.map((event, index) => (
+                    <div key={index} style={{ padding: 12, background: '#fafafa', borderRadius: 6 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontSize: 12, color: '#8c8c8c' }}>{event.time}</span>
+                        <span>{eventTypeIcons[event.type]}</span>
+                        <Tag color={event.type === 'alarm' ? 'red' : event.type === 'warning' ? 'orange' : 'blue'}>
+                          {eventTypeLabels[event.type]}
+                        </Tag>
                       </div>
-                      <span style={{ fontSize: 12, color: '#8c8c8c' }}>{doc.uploadTime}</span>
+                      <div style={{ fontSize: 13 }}>{event.description}</div>
+                      <div style={{ fontSize: 12, color: '#8c8c8c', marginTop: 4 }}>来源：{event.source}</div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', padding: 20, color: '#999' }}>暂无设备文档</div>
+                <div style={{ textAlign: 'center', padding: 20, color: '#999' }}>暂无事件记录</div>
               )}
-            </Col>
-          </Row>
-        </Card>
+            </Card>
 
-        <Card size="small" title="事件与维修">
-          <div style={{ marginBottom: 16, fontSize: 14, fontWeight: 600 }}>最近事件</div>
-          {recentEvents.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
-              {recentEvents.map((event, index) => (
-                <div key={index} style={{ padding: 12, background: '#fafafa', borderRadius: 6 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontSize: 12, color: '#8c8c8c' }}>{event.time}</span>
-                    <span>{eventTypeIcons[event.type]}</span>
-                    <Tag color={event.type === 'alarm' ? 'red' : event.type === 'warning' ? 'orange' : 'blue'}>
-                      {eventTypeLabels[event.type]}
-                    </Tag>
-                  </div>
-                  <div style={{ fontSize: 13 }}>{event.description}</div>
-                  <div style={{ fontSize: 12, color: '#8c8c8c', marginTop: 4 }}>来源：{event.source}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center', padding: 20, color: '#999', marginBottom: 16 }}>暂无事件记录</div>
-          )}
-          <div style={{ fontSize: 14, fontWeight: 600 }}>维修记录</div>
-          {maintenanceRecords.length > 0 ? (
-            <Table
-              dataSource={maintenanceRecords}
-              columns={[
-                { title: '维修时间', dataIndex: 'time', key: 'time' },
-                {
-                  title: '工单编号',
-                  dataIndex: 'workOrderCode',
-                  key: 'workOrderCode',
-                  render: (code: string) => <a href="#" style={{ color: '#1890ff' }}>{code}</a>,
-                },
-                { title: '维修类型', dataIndex: 'type', key: 'type' },
-                { title: '故障描述', dataIndex: 'faultDescription', key: 'faultDescription' },
-                { title: '维修结果', dataIndex: 'result', key: 'result' },
-                { title: '维修人员', dataIndex: 'technician', key: 'technician' },
-              ]}
-              rowKey="workOrderId"
-              size="small"
-              pagination={false}
-            />
-          ) : (
-            <div style={{ textAlign: 'center', padding: 20, color: '#999' }}>暂无维修记录</div>
-          )}
-        </Card>
+            <Card size="small" title="维修记录">
+              {maintenanceRecords.length > 0 ? (
+                <Table
+                  dataSource={maintenanceRecords}
+                  columns={[
+                    { title: '维修时间', dataIndex: 'time', key: 'time' },
+                    {
+                      title: '工单编号',
+                      dataIndex: 'workOrderCode',
+                      key: 'workOrderCode',
+                      render: (code: string) => <a href="#" style={{ color: '#1890ff' }}>{code}</a>,
+                    },
+                    { title: '维修类型', dataIndex: 'type', key: 'type' },
+                    { title: '故障描述', dataIndex: 'faultDescription', key: 'faultDescription' },
+                    { title: '维修结果', dataIndex: 'result', key: 'result' },
+                    { title: '维修人员', dataIndex: 'technician', key: 'technician' },
+                  ]}
+                  rowKey="workOrderId"
+                  size="small"
+                  pagination={false}
+                />
+              ) : (
+                <div style={{ textAlign: 'center', padding: 20, color: '#999' }}>暂无维修记录</div>
+              )}
+            </Card>
+          </TabPane>
+        </Tabs>
       </Modal>
 
       <Modal
